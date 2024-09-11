@@ -2,6 +2,7 @@ class Tree:
     def __init__(self):
         self.children = {}
 
+    # for now, just prints what should be added to it
     def add(self, node):
         print(f"Adding node |{node}|")
         return
@@ -14,7 +15,7 @@ def make_parsing_table(
     first: dict[str, set[str]],
     follow: dict[str, set[str]],
     epsilon_symbol: str,
-):
+) -> dict[tuple[str, str], dict[str, str]]:
     parsing_table = {}
     for non_term in non_terminals:
         for term in terminals:
@@ -56,20 +57,17 @@ def ll1_algorithm(
     non_term_term_pairs = parsing_table.keys()
     non_terminals = {pair[0] for pair in non_term_term_pairs}
     terminals = {pair[1] for pair in non_term_term_pairs}
-    print(f"non_terminals {non_terminals}")
-    print(f"terminals {terminals}")
 
     current = input_string[taken_len]
     taken_len += 1
 
     while stack[-1] != end_symbol:
         stack_top = stack[-1]
-        print(f"at top {stack_top}")
         if stack_top == epsilon_symbol:
             stack.pop()
             continue
         if stack_top == current:
-            tree.add(current)
+            tree.add(stack_top)
             stack.pop()
             current = input_string[taken_len]
             taken_len += 1
@@ -104,8 +102,10 @@ def main():
     first = first | {"S": {"(", EPSILON}, EPSILON: {EPSILON}}
     follow = {"S": {")", "$"}}
     table = make_parsing_table(terminals, non_terminals, rules, first, follow, EPSILON)
-    print(table)
-    ll1_algorithm("()()$", table, "S", "$", EPSILON)
+    input_str = "()()$"
+    print(f"Got parsing table: {table}")
+    print(f"Starting to parse: {input_str}")
+    ll1_algorithm(input_str, table, "S", "$", EPSILON)
     return 0
 
 
