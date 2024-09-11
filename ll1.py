@@ -48,7 +48,6 @@ def ll1_algorithm(
     end_symbol: str,
     epsilon_symbol: str,
 ):
-    tree = Tree()
     taken_len = 0
     stack = []
     stack.append(end_symbol)
@@ -67,12 +66,10 @@ def ll1_algorithm(
             stack.pop()
             continue
         if stack_top == current:
-            tree.add(stack_top)
             stack.pop()
             current = input_string[taken_len]
             taken_len += 1
         elif stack_top in non_terminals:
-            tree.add(stack_top)
             corresponding_rule = parsing_table[stack_top, current]
             if corresponding_rule is None:
                 raise LookupError(
